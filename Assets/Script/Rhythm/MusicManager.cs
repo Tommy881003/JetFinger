@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MusicManager : MonoBehaviour
 {
@@ -45,6 +46,8 @@ public class MusicManager : MonoBehaviour
     private int _missCount = 0;
     public int missCount { get { return _missCount; } }
 
+    public UnityEvent OnSongStart = new UnityEvent();
+
     private void Awake()
     {
         if (instance == null)
@@ -62,6 +65,7 @@ public class MusicManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            ResetSongData();
             _source.Play();
             _startTime = AudioSettings.dspTime;
         }  
@@ -79,7 +83,14 @@ public class MusicManager : MonoBehaviour
         _offset = _chart.musicData.offset;
         _songPosition = 0;
 
+        _combo = 0;
+        _highestCombo = 0;
+        _hitCount = 0;
+        _missCount = 0;
+
         notes = _chart.GetNotes();
+
+        OnSongStart.Invoke();
     }
 
     private void OnAudioFilterRead(float[] data, int channels)

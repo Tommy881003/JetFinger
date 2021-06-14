@@ -61,8 +61,10 @@ public class Track : MonoBehaviour
     {
         manager = MusicManager.instance;
 
-        notes = manager.notes[(int)id];
-        nextNoteIndex = 0;     
+        manager.OnSongStart.AddListener(ResetSong);
+
+        //notes = manager.notes[(int)id];
+        //nextNoteIndex = 0;     
         
         if (manager.useKeyboard)
             keyText.text = "[" + key.ToString() + "]";
@@ -186,6 +188,17 @@ public class Track : MonoBehaviour
                 break;
             delta = (notes[nextNoteIndex].beatNumber - manager.songBeat) * manager.crotchet * trackSpeed;
         }
+    }
+
+    private void ResetSong()
+    {
+        while(disks.Count > 0)
+        {
+            HitDisk disk = disks.Dequeue();
+            Destroy(disk.gameObject);
+        }
+        notes = manager.notes[(int)id];
+        nextNoteIndex = 0;
     }
 
     private void OnCollisionEnter(Collision collision)
